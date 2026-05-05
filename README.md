@@ -20,6 +20,9 @@ Key Features:
  🎯 Command History - Full readline support with persistent history
 
 
+
+
+
  Smart Features:
 Offline responses for greetings and common queries
 Stateful shell execution with directory persistence
@@ -27,6 +30,9 @@ Streaming text output for natural feel
 Automatic voice mode with customizable speeds
 Continuous voice listening mode for hands-free operation
 Configurable settings stored in ~/.q-claw/settings.json
+
+
+
 
 
 Perfect for: Developers, system administrators, and power users seeking an intelligent, always-available terminal assistant with voice capabilities and web search integration.
