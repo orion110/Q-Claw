@@ -1,1 +1,1 @@
-Q-Claw
+Q-Claw (powered by Qwen)
