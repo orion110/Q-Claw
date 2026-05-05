@@ -1,6 +1,11 @@
 Q-Claw (powered by Qwen)
 
+
+
+
 Q-Claw is a feature-rich terminal AI assistant that brings the power of Qwen directly to your command line. Designed as a comprehensive local AI interface, it combines intelligent conversational AI with practical system utilities.
+
+
 
 
 
@@ -23,6 +28,7 @@ Key Features:
 
 
 
+
  Smart Features:
 Offline responses for greetings and common queries
 Stateful shell execution with directory persistence
@@ -35,7 +41,10 @@ Configurable settings stored in ~/.q-claw/settings.json
 
 
 
+
 Perfect for: Developers, system administrators, and power users seeking an intelligent, always-available terminal assistant with voice capabilities and web search integration.
+
+
 
 
 
@@ -46,6 +55,9 @@ ollama pull qwen2:0.5b
 
  Start the Ollama service
 ollama serve
+
+
+
 
 
 
@@ -61,11 +73,15 @@ pip install kokoro-onnx sounddevice numpy --break-system-packages
 
 
 
+
+
 pip install vosk sounddevice --break-system-packages
 
  Download and extract Vosk model
 wget https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
 unzip vosk-model-small-en-us-0.15.zip -d ~/.q-claw/vosk-model
+
+
 
 
 
