@@ -5,7 +5,6 @@ Q-Claw (powered by Qwen)
 
 Q-Claw is a feature-rich terminal AI assistant that brings the power of Qwen directly to your command line. Designed as a comprehensive local AI interface, it combines intelligent conversational AI with practical system utilities.
 
-
 [![claw.png](https://i.postimg.cc/FHF9rX6T/claw.png)](https://postimg.cc/RN8rdy4t)
 
 
