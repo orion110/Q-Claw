@@ -1,6 +1,6 @@
 Q-Claw (powered by Qwen)
 
-[![IMG-2710.jpg](https://i.postimg.cc/D07wLkLm/IMG-2710.jpg)](https://postimg.cc/ph1vMS0t)
+[![IMG-2978.webp](https://i.postimg.cc/90CktdGg/IMG-2978.webp)](https://postimg.cc/1n7MyN7D)
 
 
 Q-Claw is a feature-rich terminal AI assistant that brings the power of Qwen directly to your command line. Designed as a comprehensive local AI interface, it combines intelligent conversational AI with practical system utilities.
@@ -23,7 +23,7 @@ Shell Integration - Execute shell commands with persistent directory state
 
 Command History - Full readline support with persistent history
 
-[![IMG-2978.webp](https://i.postimg.cc/90CktdGg/IMG-2978.webp)](https://postimg.cc/1n7MyN7D)
+
 
 
 
