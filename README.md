@@ -86,3 +86,6 @@ unzip vosk-model-small-en-us-0.15.zip -d ~/.q-claw/vosk-model
 
 python3 Q-Claw.py
 
+
+
+[![IMG-2978.webp](https://i.postimg.cc/90CktdGg/IMG-2978.webp)](https://postimg.cc/1n7MyN7D)
