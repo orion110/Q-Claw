@@ -45,7 +45,7 @@ Configurable settings stored in ~/.q-claw/settings.json
 Perfect for: Developers, system administrators, and power users seeking an intelligent, always-available terminal assistant with voice capabilities and web search integration.
 
 
-
+```bash
 Download and run Ollama
 curl -fsSL https://ollama.ai/install.sh | sh
 
@@ -55,13 +55,14 @@ ollama pull qwen2:0.5b
 ollama serve
 
 
+```bash
 git clone https://github.com/orion110/Q-Claw
 cd Q-Claw
 chmod +x Q-Claw.py
 Q-Claw python3 
  
 
-
+```bash
 pip install kokoro-onnx sounddevice numpy --break-system-packages
 
  Download model files to ~/.q-claw/
