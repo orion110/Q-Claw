@@ -51,7 +51,6 @@ cd Q-Claw
 chmod +x Q-Claw.py
 Q-Claw python3 
 
-```bash
 Download and run Ollama
 curl -fsSL https://ollama.ai/install.sh | sh
 
@@ -62,7 +61,6 @@ Start the Ollama service
 ollama serve
  
 
-```bash
 pip install kokoro-onnx sounddevice numpy --break-system-packages
 
  Download model files to ~/.q-claw/
@@ -77,7 +75,6 @@ Download:
 - kokoro-v1.0.onnx
 - voices-v1.0.bin
 Place in: ~/Q-Claw/
-
 
 
 Download and extract Vosk model
