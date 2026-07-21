@@ -8,7 +8,8 @@ Q-Claw is a feature-rich terminal AI assistant that brings the power of Qwen dir
 [![claw.png](https://i.postimg.cc/FHF9rX6T/claw.png)](https://postimg.cc/RN8rdy4t)
 
 
-Key Features:
+##Key Features:
+
 AI-Powered Chat - Interactive conversations using Qwen models via Ollama 
 
 Text-to-Speech - Built-in voice synthesis using Kokoro TTS 
