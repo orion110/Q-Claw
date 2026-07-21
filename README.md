@@ -46,8 +46,6 @@ Perfect for: Developers, system administrators, and power users seeking an intel
 
 
 
-
-
 Download and run Ollama
 curl -fsSL https://ollama.ai/install.sh | sh
 
@@ -67,6 +65,7 @@ pip install kokoro-onnx sounddevice numpy --break-system-packages
  Visit: https://github.com/remsky/Kokoro-ONNX
 
 wget https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
+
 unzip vosk-model-small-en-us-0.15.zip -d /home//Q-Claw/vosk-model
 
  Download:
@@ -75,18 +74,11 @@ unzip vosk-model-small-en-us-0.15.zip -d /home//Q-Claw/vosk-model
  Place in: ~/Q-Claw/
 
 
-
-
-
-
 pip install vosk sounddevice --break-system-packages
 
  Download and extract Vosk model
 wget https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
 unzip vosk-model-small-en-us-0.15.zip -d ~/.q-claw/vosk-model
-
-
-
 
 
 python3 Q-Claw.py
