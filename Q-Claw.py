@@ -37,6 +37,40 @@ def save_history():
         pass
 
 # -------------------------------
+# SLASH COMMANDS
+# -------------------------------
+SLASH_COMMANDS = {
+    "/help":    "show this menu",
+    "/search":  "wiki + web search",
+    "/fetch":   "show system info",
+    "/mic":     "toggle mic on/off",
+    "/listen":  "lock into continuous voice mode (speaks replies, say 'stop' to exit)",
+    "/info":    "Q-Claw info",
+    "/clear":   "clear screen",
+    "/reset":   "wipe conversation history (fresh context, screen stays)",
+    "/compact": "summarize conversation history into a shorter context",
+    "/model":   "show or switch the Ollama model, e.g. /model qwen2:0.5b",
+    "/audit":   "self-analyze source code for bugs and improvements",
+    "/exit":    "quit",
+}
+
+def _slash_completer(text, state):
+    matches = [c for c in SLASH_COMMANDS if c.startswith(text)]
+    matches.sort()
+    if state < len(matches):
+        return matches[state]
+    return None
+
+def _completer(text, state):
+    buf = readline.get_line_buffer()
+    if buf.startswith("/"):
+        return _slash_completer(text, state)
+    return None
+
+readline.set_completer(_completer)
+readline.set_completer_delims(" \t\n")
+
+# -------------------------------
 # THEMES
 # -------------------------------
 THEMES = {
@@ -50,7 +84,7 @@ RESET = "\033[0m"
 # -------------------------------
 SETTINGS_DIR = os.path.expanduser("~/Q-Claw")
 SETTINGS_FILE = os.path.join(SETTINGS_DIR, "settings.json")
-DEFAULT_SETTINGS = {"theme": "light_orange", "model": "qwen2:0.5b", "voice": False, "mic": False}
+DEFAULT_SETTINGS = {"theme": "light_orange", "model": "qwen2:0.5b", "mic": False}
 os.makedirs(SETTINGS_DIR, exist_ok=True)
 
 def load_settings():
@@ -72,6 +106,7 @@ KOKORO_AVAILABLE = False
 _kokoro = None
 _kokoro_lock = threading.Lock()
 _speaking = False
+IN_VOICE_MODE = False
 
 try:
     from kokoro_onnx import Kokoro
@@ -99,7 +134,7 @@ def _preload_kokoro():
     except Exception:
         pass
 
-if KOKORO_AVAILABLE and SETTINGS.get("voice"):
+if KOKORO_AVAILABLE:
     threading.Thread(target=_preload_kokoro, daemon=True).start()
 
 def clean_text(text):
@@ -111,7 +146,7 @@ def clean_text(text):
     return clean.strip()
 
 def speak(text):
-    if not SETTINGS.get("voice") or not KOKORO_AVAILABLE:
+    if not IN_VOICE_MODE or not KOKORO_AVAILABLE:
         return
     clean = clean_text(text)
     if not clean:
@@ -183,12 +218,25 @@ def listen_mic():
 
     try:
         import array as array_mod
+
+        # --- NEW: Validate model structure before loading ---
         if _VOSK_MODEL is None:
+            required_dirs = ['am', 'conf', 'graph']
+            missing = [d for d in required_dirs if not os.path.isdir(os.path.join(VOSK_MODEL_PATH, d))]
+            if missing:
+                qprint(f"Vosk model error: Folder exists but is missing: {', '.join(missing)}")
+                qprint("Did you nest the unzip folder inside the folder? Check inside ~/Q-Claw/vosk-model")
+                return None
+
             old_fd, devnull = _suppress_stderr()
             try:
                 _VOSK_MODEL = vosk.Model(VOSK_MODEL_PATH)
+            except Exception as e:
+                qprint(f"Failed to load Vosk model: {e}")
+                return None
             finally:
                 _restore_stderr(old_fd, devnull)
+        # ---------------------------------------------------
 
         model = _VOSK_MODEL
         q = queue_mod.Queue()
@@ -263,7 +311,7 @@ def refresh():
     t = datetime.now().strftime("%H:%M:%S")
     qprint(f"Qwen-Claw | {t} | {SETTINGS['model']}")
     print()
-    qprint("help | listen | clear | exit")
+    qprint("| / | /clear | /exit")
     print()
 
 # -------------------------------
@@ -282,15 +330,37 @@ def stream(text, delay=0.001):
 # PONDERING
 # -------------------------------
 PONDER = [
-    "thinking...",
-    "pondering...",
-    "let me think...",
-    "processing...",
-    "one moment...",
-    "considering...",
-    "working on it...",
-    "hmm...",
+    "Thinking...",
+    "Reflecting...",
+    "Considering...",
+    "Analyzing...",
+    "Reasoning...",
+    "Processing...",
+    "Working through this...",
+    "Looking at this carefully...",
+    "Thinking it through...",
+    "Exploring possibilities...",
+    "Evaluating options...",
+    "Connecting ideas...",
+    "Gathering context...",
+    "Reviewing information...",
+    "Formulating a response...",
+    "Checking details...",
+    "Piecing this together...",
+    "Taking a closer look...",
+    "Organizing my thoughts...",
+    "Building an answer...",
+    "Following the logic...",
+    "Tracing implications...",
+    "Examining the question...",
+    "Looking for patterns...",
+    "Working out the details...",
+    "Synthesizing information...",
+    "Narrowing it down...",
+    "Arriving at an answer...",
+    "Finalizing my response..."
 ]
+
 
 # -------------------------------
 # CONVERSATION HISTORY
@@ -313,9 +383,58 @@ GREETING_REPLIES = [
     "Hey! Good to hear from you.",
     "Sup. Need something?",
     "Hello! What can I assist you with?",
+
+    "Hey. How's it going?",
+    "Hi. What are we working on today?",
+    "Yo. What's the plan?",
+    "Hello there.",
+    "Hey. Got a question?",
+    "Hi. What can I help you figure out?",
+    "Good to see you. What's up?",
+    "Hey. What's on the agenda?",
+    "Hello. How can I be useful?",
+    "Hi. What's happening?",
+    "Yo. What can I do for you?",
+    "Hey there. Need a hand?",
+    "Hello. What's the challenge today?",
+    "Hi. What are you thinking about?",
+    "Hey. Let's get started.",
+    "Welcome back. What's new?",
+    "Hey. What are we tackling today?",
+    "Hi there. How can I help out?",
+    "Yo. What's on your mind?",
+    "Hello. Ready to dive in?",
+    "Hi. I'm listening.",
+    "Hello. Let's see what we can solve.",
+    "Hey. What would you like to explore?",
+    "Good to hear from you. What's up?",
+    "Hi. How can I assist today?",
+    "Hey. What can I help with?",
+    "Yo. Got something interesting?",
+    "Hello. What brings you here today?",
+    "Hey. Ready when you are."
 ]
 
-HOW_ARE_YOU = ["how are you", "how r u", "you ok", "you good", "hows it going", "how's it going", "how you doing", "how you doin"]
+
+HOW_ARE_YOU = [
+    "how are you",
+    "how r u",
+    "you ok",
+    "you good",
+    "hows it going",
+    "how's it going",
+    "how you doing",
+    "how you doin",
+    "how are things",
+    "whats up",
+    "what's up",
+    "how have you been",
+    "everything good",
+    "you alright",
+    "u good",
+    "u ok"
+]
+
 HOW_REPLIES = [
     "Running fine. You?",
     "All systems go.",
@@ -325,7 +444,39 @@ HOW_REPLIES = [
     "Pretty good. Ready to help.",
     "All good here. What about you?",
     "Solid. What can I do for you?",
+
+    "Can't complain. What's on your mind?",
+    "Doing great. How about you?",
+    "Everything's running smoothly.",
+    "Ready when you are.",
+    "Doing fine. Need anything?",
+    "Working as expected.",
+    "All clear on my end.",
+    "Feeling productive today.",
+    "No issues here.",
+    "Running at full capacity.",
+    "Doing well. What are we tackling?",
+    "Good to go.",
+    "Ready for the next question.",
+    "Doing alright. What's up?",
+    "Still operational.",
+    "Online and ready.",
+    "Everything checks out.",
+    "Functioning normally.",
+    "Just processing the universe. You?",
+    "Same as always. Ready to help.",
+    "Here and listening.",
+    "Available and ready.",
+    "Doing fine. What's new?",
+    "Not bad for a pile of code.",
+    "Couldn't be better. What's up?",
+    "Ready to dive in.",
+    "Still standing.",
+    "Locked in and ready.",
+    "All systems nominal.",
+    "Ready for action."
 ]
+
 
 def offline_reply(prompt):
     c = prompt.lower().strip().rstrip("?!.")
@@ -416,7 +567,7 @@ def fetch_info():
     except Exception:
         pass
     lines.append(f"  Model    {SETTINGS['model']}")
-    lines.append(f"  Voice    {'ON (kokoro)' if SETTINGS.get('voice') else 'OFF'}")
+    lines.append(f"  Voice    {'available (listen mode only)' if KOKORO_AVAILABLE else 'unavailable'}")
     lines.append(f"  Mic      {'ON (vosk)' if SETTINGS.get('mic') else 'OFF'}")
     lines.append(f"  Time     {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print()
@@ -540,12 +691,23 @@ def ask_ollama(prompt):
             HISTORY = HISTORY[-(MAX_HISTORY_PAIRS * 2):]
 
         messages = [
-            {"role": "system", "content": (
-                "You are Q-Claw, a sharp and helpful terminal AI assistant. "
-                "Be concise and direct. Never repeat yourself or restate what was already said. "
-                "Never start responses with filler like 'Sure', 'Of course', 'Certainly', or 'Great'. "
-                "Get straight to the point."
-            )}
+            {
+                "role": "system",
+                "content": (
+                    "You are Q-Claw, a sharp, capable terminal AI assistant. "
+                    "Be concise, direct, and useful. "
+                    "Answer the user's question immediately. "
+                    "Avoid filler, repetition, apologies, and unnecessary enthusiasm. "
+                    "Never begin responses with phrases like "
+                    "'Sure', 'Of course', 'Certainly', 'Absolutely', "
+                    "'Great question', 'I'd be happy to help', or similar. "
+                    "Use plain language. "
+                    "Keep responses compact unless detail is requested. "
+                    "Do not restate the user's question. "
+                    "Do not explain your reasoning unless asked. "
+                    "Prioritize actionable information over commentary."
+                )
+            }
         ] + HISTORY
 
         r = requests.post(
@@ -581,6 +743,111 @@ def ask_ollama(prompt):
         qprint(f"Ollama error: {type(e).__name__}: {e}")
 
 # -------------------------------
+# SELF-AUDIT
+# -------------------------------
+def self_audit():
+    """Read own source code and send to LLM for analysis"""
+    script_path = os.path.abspath(__file__)
+    try:
+        with open(script_path, 'r') as f:
+            source_code = f.read()
+
+        qprint("\nSelf-auditing codebase...\n")
+
+        audit_prompt = f"""You are a code reviewer. Analyze this Python code for bugs, issues, and improvements.
+Focus on:
+- Logic errors or edge cases
+- Resource leaks (unclosed files, threads not properly managed)
+- Exception handling gaps
+- Performance issues
+- Security concerns
+- Code quality and maintainability
+
+Be specific and actionable. For each issue, provide the line number or function name and suggest a fix.
+
+Code:
+{source_code}
+
+Provide your analysis in a structured format."""
+
+        ask_ollama(audit_prompt)
+
+    except Exception as e:
+        qprint(f"Audit error: {e}")
+
+# -------------------------------
+# RESET / COMPACT / MODEL
+# -------------------------------
+def reset_history():
+    global HISTORY
+    n = len(HISTORY) // 2
+    HISTORY = []
+    qprint(f"History cleared ({n} exchange{'s' if n != 1 else ''} dropped). Fresh context.")
+
+def compact_history():
+    global HISTORY
+    if not HISTORY:
+        qprint("Nothing to compact.")
+        return
+    qprint("Compacting...")
+    transcript = "\n".join(f"{m['role']}: {m['content']}" for m in HISTORY)
+    try:
+        r = requests.post(
+            "http://localhost:11434/api/chat",
+            json={
+                "model": SETTINGS["model"],
+                "stream": False,
+                "messages": [
+                    {"role": "system", "content": (
+                        "Summarize the following conversation in a short paragraph, "
+                        "preserving key facts, decisions, and context needed to continue it. "
+                        "Be concise."
+                    )},
+                    {"role": "user", "content": transcript},
+                ],
+            },
+            timeout=60,
+        )
+        data = r.json()
+        summary = data.get("message", {}).get("content", "").strip()
+        if summary:
+            old_count = len(HISTORY) // 2
+            HISTORY = [{"role": "user", "content": f"(Earlier conversation summary: {summary})"}]
+            qprint(f"Compacted {old_count} exchange{'s' if old_count != 1 else ''} into a summary.")
+        else:
+            qprint("Compact failed: empty summary.")
+    except requests.exceptions.ConnectionError:
+        qprint("Ollama not running. Start with: ollama serve")
+    except Exception as e:
+        qprint(f"Compact error: {type(e).__name__}: {e}")
+
+def list_ollama_models():
+    try:
+        r = requests.get("http://localhost:11434/api/tags", timeout=5)
+        data = r.json()
+        return [m["name"] for m in data.get("models", [])]
+    except Exception:
+        return []
+
+def switch_model(name):
+    if not name:
+        current = SETTINGS["model"]
+        models = list_ollama_models()
+        qprint(f"Current model: {current}")
+        if models:
+            qprint("Available models:")
+            for m in models:
+                marker = " *" if m == current else ""
+                qprint(f"  {m}{marker}")
+        else:
+            qprint("(could not reach Ollama to list models — is it running?)")
+        qprint("Use /model <name> to switch.")
+        return
+    SETTINGS["model"] = name.strip()
+    save_settings()
+    qprint(f"Model set to: {SETTINGS['model']}")
+
+# -------------------------------
 # TOGGLES
 # -------------------------------
 def save_settings():
@@ -589,21 +856,6 @@ def save_settings():
             json.dump(SETTINGS, f)
     except Exception:
         pass
-
-def toggle_voice():
-    if not KOKORO_AVAILABLE:
-        qprint("Kokoro not found. Install with:")
-        qprint("  pip install kokoro-onnx sounddevice numpy --break-system-packages")
-        qprint("  Then download model files to ~/Q-Claw/:")
-        qprint("  kokoro-v1.0.onnx and voices-v1.0.bin")
-        return
-    SETTINGS["voice"] = not SETTINGS.get("voice", False)
-    state = "ON" if SETTINGS["voice"] else "OFF"
-    qprint(f"Voice {state}")
-    save_settings()
-    if SETTINGS["voice"]:
-        threading.Thread(target=_preload_kokoro, daemon=True).start()
-        speak("Voice mode enabled.")
 
 def toggle_mic():
     if not VOSK_AVAILABLE:
@@ -622,32 +874,42 @@ def toggle_mic():
 # LOCKED LISTEN LOOP
 # -------------------------------
 def listen_loop():
+    global IN_VOICE_MODE
     if not VOSK_AVAILABLE:
         qprint("Vosk not available.")
         return
+    if not KOKORO_AVAILABLE:
+        qprint("Kokoro not found, voice replies will be silent. Install with:")
+        qprint("  pip install kokoro-onnx sounddevice numpy --break-system-packages")
+        qprint("  Then download model files to ~/Q-Claw/:")
+        qprint("  kokoro-v1.0.onnx and voices-v1.0.bin")
     qprint("Voice mode locked. Say 'stop' or Ctrl+C to exit.")
     print()
+    IN_VOICE_MODE = True
     silent_rounds = 0
-    while True:
-        try:
-            wait_speaking()
-            qprint("Listening...")
-            spoken = listen_mic()
-            if not spoken:
-                silent_rounds += 1
-                if silent_rounds >= 5:
-                    qprint("No input detected. Exiting voice mode.")
+    try:
+        while True:
+            try:
+                wait_speaking()
+                qprint("Listening...")
+                spoken = listen_mic()
+                if not spoken:
+                    silent_rounds += 1
+                    if silent_rounds >= 5:
+                        qprint("No input detected. Exiting voice mode.")
+                        break
+                    continue
+                silent_rounds = 0
+                if spoken.lower().strip() in ("stop", "exit", "quit", "bye"):
+                    qprint("Exiting voice mode.")
                     break
-                continue
-            silent_rounds = 0
-            if spoken.lower().strip() in ("stop", "exit", "quit", "bye"):
+                process(spoken)
+            except KeyboardInterrupt:
+                print()
                 qprint("Exiting voice mode.")
                 break
-            process(spoken)
-        except KeyboardInterrupt:
-            print()
-            qprint("Exiting voice mode.")
-            break
+    finally:
+        IN_VOICE_MODE = False
 
 # -------------------------------
 # COMMANDS
@@ -664,11 +926,52 @@ def handle(cmd):
     return False
 
 # -------------------------------
+# SLASH MENU
+# -------------------------------
+def show_slash_menu():
+    qprint("\nSlash commands:")
+    width = max(len(c) for c in SLASH_COMMANDS)
+    for name, desc in SLASH_COMMANDS.items():
+        qprint(f"  {name.ljust(width)}   {desc}")
+    print()
+
+# -------------------------------
 # PROCESS
 # -------------------------------
 def process(cmd):
     if handle(cmd):
         return
+
+    stripped = cmd.strip()
+    if stripped == "/":
+        show_slash_menu()
+        return
+    if stripped.startswith("/"):
+        parts = stripped.split(maxsplit=1)
+        slash_word = parts[0].lower()
+        rest = parts[1] if len(parts) > 1 else ""
+        if slash_word == "/search":
+            if not rest:
+                qprint("Search what? e.g. /search")
+                return
+            cmd = f"search {rest}"
+        elif slash_word == "/reset":
+            reset_history()
+            return
+        elif slash_word == "/compact":
+            compact_history()
+            return
+        elif slash_word == "/model":
+            switch_model(rest)
+            return
+        elif slash_word == "/audit":
+            self_audit()
+            return
+        elif slash_word in ("/help", "/fetch", "/mic", "/listen", "/info", "/clear", "/exit"):
+            cmd = slash_word[1:]
+        else:
+            qprint(f"Unknown command: {slash_word}  (try / for a list)")
+            return
 
     c = cmd.lower().strip()
 
@@ -700,26 +1003,25 @@ def process(cmd):
         return
 
     if c == "help":
-        voice_status = "ON" if SETTINGS.get("voice") else "OFF"
         mic_status = "ON" if SETTINGS.get("mic") else "OFF"
+        voice_avail = "available" if KOKORO_AVAILABLE else "unavailable"
         qprint(f"""
-Commands:
-  search <query>   wiki + web search
-  fetch            system info
-  voice            toggle voice on/off
-  mic              toggle mic on/off
-  listen           lock into continuous voice mode (say 'stop' to exit)
-  help             this menu
-  info             Q-Claw info
-  clear            clear screen
-  exit             quit
+Commands (type '/' + Tab to autocomplete):
+  /search <query>  wiki + web search
+  /fetch           system info
+  /mic             toggle mic on/off
+  /listen          lock into continuous voice mode (speaks replies, say 'stop' to exit)
+  /reset           wipe conversation history, fresh context
+  /compact         summarize conversation history into a shorter context
+  /model [name]    show current model / list available / switch model
+  /audit           self-analyze source code for bugs and improvements
+  /help            this menu
+  /info            Q-Claw info
+  /clear           clear screen
+  /exit            quit
 
-Status: voice:{voice_status} | mic:{mic_status}
+Status: mic:{mic_status} | voice:{voice_avail} (only active during 'listen') | model:{SETTINGS['model']}
 """)
-        return
-
-    if c == "voice":
-        toggle_voice()
         return
 
     if c == "mic":
@@ -732,7 +1034,7 @@ Status: voice:{voice_status} | mic:{mic_status}
         qprint(f"Q-Claw — Local terminal AI assistant")
         qprint(f"OS: {platform.system()} | Kernel: {platform.release()}")
         qprint(f"Model: {SETTINGS['model']}")
-        qprint(f"Voice: {'ON (kokoro)' if SETTINGS.get('voice') else 'OFF'}")
+        qprint(f"Voice: {'available (active during listen mode)' if KOKORO_AVAILABLE else 'unavailable'}")
         qprint(f"Mic:   {'ON (vosk)' if SETTINGS.get('mic') else 'OFF'}\n")
         info_text = f"Q-Claw. Local terminal AI assistant. Running on {platform.system()} with kernel {platform.release()}. Model is {SETTINGS['model']}."
         speak(info_text)
