@@ -64,8 +64,8 @@ ollama serve
 
 pip install kokoro-onnx sounddevice numpy --break-system-packages
 
- Download model files to ~/.q-claw/
- Visit: https://github.com/remsky/Kokoro-ONNX
+Download model files to ~/.q-claw/
+Visit: https://github.com/remsky/Kokoro-ONNX
 
 wget https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
 
@@ -84,6 +84,10 @@ wget https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
 unzip vosk-model-small-en-us-0.15.zip -d ~/.q-claw/vosk-model
 
 pip install vosk sounddevice --break-system-packages
+
+```bash
+
+
 
 [![1153917653694562395.webp](https://i.postimg.cc/wMpDnvrR/1153917653694562395.webp)](https://postimg.cc/PpSLwtTd)
 
