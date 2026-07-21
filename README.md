@@ -55,8 +55,11 @@ ollama pull qwen2:0.5b
 ollama serve
 
 
-
-
+git clone https://github.com/orion110/Q-Claw
+cd Q-Claw
+chmod +x Q-Claw.py
+Q-Claw python3 
+ 
 
 
 pip install kokoro-onnx sounddevice numpy --break-system-packages
