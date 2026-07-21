@@ -61,7 +61,6 @@ Start the Ollama service
 
 ollama serve
  
-
 pip install kokoro-onnx sounddevice numpy --break-system-packages
 
 Download model files to ~/.q-claw/
@@ -71,12 +70,10 @@ wget https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
 
 unzip vosk-model-small-en-us-0.15.zip -d /home//Q-Claw/vosk-model
 
-
 Download:
 - kokoro-v1.0.onnx
 - voices-v1.0.bin
 Place in: ~/Q-Claw/
-
 
 Download and extract Vosk model
 wget https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
@@ -85,7 +82,7 @@ unzip vosk-model-small-en-us-0.15.zip -d ~/.q-claw/vosk-model
 
 pip install vosk sounddevice --break-system-packages
 
-```bash
+```
 
 
 
