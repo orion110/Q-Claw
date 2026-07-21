@@ -52,37 +52,30 @@ Perfect for: Developers, system administrators, and power users seeking an intel
 git clone https://github.com/orion110/Q-Claw
 cd Q-Claw
 chmod +x Q-Claw.py
-Q-Claw python3 
 
 Download and run Ollama
+
 curl -fsSL https://ollama.ai/install.sh | sh
 
 ollama pull qwen2:0.5b
 
-Start the Ollama service
-
 ollama serve
- 
-pip install kokoro-onnx sounddevice numpy --break-system-packages
-
-Download model files to ~/.q-claw/
-Visit: https://github.com/remsky/Kokoro-ONNX
-
-wget https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
-
-unzip vosk-model-small-en-us-0.15.zip -d /home//Q-Claw/vosk-model
 
 Download:
 - kokoro-v1.0.onnx
 - voices-v1.0.bin
+
 Place in: ~/Q-Claw/
 
-Download and extract Vosk model
+pip install kokoro-onnx sounddevice numpy --break-system-packages
+
+pip install vosk sounddevice --break-system-packages
+
 wget https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
 
 unzip vosk-model-small-en-us-0.15.zip -d ~/.q-claw/vosk-model
 
-pip install vosk sounddevice --break-system-packages
+python3 Q-Claw.py
 
 ```
 
