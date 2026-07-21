@@ -65,6 +65,10 @@ pip install kokoro-onnx sounddevice numpy --break-system-packages
 
  Download model files to ~/.q-claw/
  Visit: https://github.com/remsky/Kokoro-ONNX
+
+wget https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
+unzip vosk-model-small-en-us-0.15.zip -d /home//Q-Claw/vosk-model
+
  Download:
   - kokoro-v1.0.onnx
   - voices-v1.0.bin
