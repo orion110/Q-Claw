@@ -86,5 +86,6 @@ pip install vosk sounddevice --break-system-packages
 
 
 
+
 [![1153917653694562395.webp](https://i.postimg.cc/wMpDnvrR/1153917653694562395.webp)](https://postimg.cc/PpSLwtTd)
 
