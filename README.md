@@ -8,7 +8,7 @@ Q-Claw is a feature-rich terminal AI assistant that brings the power of Qwen dir
 [![claw.png](https://i.postimg.cc/FHF9rX6T/claw.png)](https://postimg.cc/RN8rdy4t)
 
 
-**Key Features:
+Key Features:
 
 AI-Powered Chat - Interactive conversations using Qwen models via Ollama 
 
@@ -85,5 +85,5 @@ unzip vosk-model-small-en-us-0.15.zip -d ~/.q-claw/vosk-model
 
 pip install vosk sounddevice --break-system-packages
 
-
+[![1153917653694562395.webp](https://i.postimg.cc/wMpDnvrR/1153917653694562395.webp)](https://postimg.cc/PpSLwtTd)
 
