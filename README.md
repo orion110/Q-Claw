@@ -46,20 +46,20 @@ Perfect for: Developers, system administrators, and power users seeking an intel
 
 
 ```bash
+git clone https://github.com/orion110/Q-Claw
+cd Q-Claw
+chmod +x Q-Claw.py
+Q-Claw python3 
+
+```bash
 Download and run Ollama
 curl -fsSL https://ollama.ai/install.sh | sh
 
 ollama pull qwen2:0.5b
 
- Start the Ollama service
+Start the Ollama service
+
 ollama serve
-
-
-```bash
-git clone https://github.com/orion110/Q-Claw
-cd Q-Claw
-chmod +x Q-Claw.py
-Q-Claw python3 
  
 
 ```bash
@@ -72,18 +72,20 @@ wget https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
 
 unzip vosk-model-small-en-us-0.15.zip -d /home//Q-Claw/vosk-model
 
- Download:
-  - kokoro-v1.0.onnx
-  - voices-v1.0.bin
- Place in: ~/Q-Claw/
 
+Download:
+- kokoro-v1.0.onnx
+- voices-v1.0.bin
+Place in: ~/Q-Claw/
+
+
+
+Download and extract Vosk model
+wget https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
+
+unzip vosk-model-small-en-us-0.15.zip -d ~/.q-claw/vosk-model
 
 pip install vosk sounddevice --break-system-packages
 
- Download and extract Vosk model
-wget https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
-unzip vosk-model-small-en-us-0.15.zip -d ~/.q-claw/vosk-model
 
-
-python3 Q-Claw.py
 
